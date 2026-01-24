@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPADE - Society for Practical Applications and Development of Economics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="images/logospade.PNG" type="image/x-icon">
+    <style>
+        :root {
+            /* New Minty Forest Frog Palette */
+            --primary-color: #646E68;     /* Muted Gray-Green */
+            --primary-light-color: #D1DEDE;  /* Light Blueish Gray */
+            --background-light: #FFFFFF;     /* White */
+            --background-dark: #011638;      /* Deepest Blue */
+            --text-color: #101935;           /* Dark Blue */
+            --text-color-light: #646E68;     /* Muted Gray-Green */
+            --white: #FFFFFF;
+            --creator: #002767eb;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-heavy: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition-fast: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --transition-slow: 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --border-radius: 1rem;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color-light);
+            background-color: var(--background-light);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section {
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--white);
+            color: var(--primary-color);
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--primary-light-color);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-color), var(--text-color-light));
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            transform: scale(0);
+            z-index: -1;
+            border-radius: inherit;
+        }
+
+        .btn-primary:hover {
+            color: var(--white);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(100, 110, 104, 0.3);
+            border-color: transparent;
+        }
+
+        .btn-primary:hover::before {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--text-color) 0%, var(--background-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.8s ease, visibility 0.8s;
+            pointer-events: none;
+        }
+        
+        .preloader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader-text {
+            font-size: 3rem;
+            color: var(--white);
+            font-weight: 700;
+            display: flex;
+        }
+        .preloader-text span {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: preloader-reveal 1.25s ease-out forwards;
+        }
+        .preloader-text span:nth-child(1) { animation-delay: 0.1s; }
+        .preloader-text span:nth-child(2) { animation-delay: 0.2s; }
+        .preloader-text span:nth-child(3) { animation-delay: 0.3s; }
+        .preloader-text span:nth-child(4) { animation-delay: 0.4s; }
+        .preloader-text span:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes preloader-reveal {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--text-color-light));
+            z-index: 9999;
+            width: 0;
+            transition: width 0.1s linear;
+        }
+
+        /* Header & Navigation */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 10px 0;
+            background-color: transparent;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .header.scrolled {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 45px;
+            transition: transform var(--transition-fast);
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05) rotate(-3deg);
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            position: relative;
+            padding: 5px 0;
+            transition: color var(--transition-fast);
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.4s ease, left 0.4s ease;
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+            left: 0;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .header.scrolled .nav-link { color: var(--text-color-light); }
+        .header.scrolled .nav-link:hover { color: var(--primary-color); }
+
+        /* Mobile Navigation */
+        .nav-toggle { display: none; cursor: pointer; flex-direction: column; gap: 5px; z-index: 1100; }
+        .nav-toggle span { width: 25px; height: 3px; background: var(--text-color); transition: all var(--transition-fast); transform-origin: center; }
+        .nav-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .nav-toggle.active span:nth-child(2) { opacity: 0; }
+        .nav-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, var(--text-color) 0%, var(--background-dark) 100%);
+            color: var(--white);
+            padding-top: 100px;
+            position: relative;
+        }
+        
+        .hero-divider-container {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 120px; 
+            overflow: hidden;
+        }
+
+        .hero-divider {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+        
+        .waves .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 120px;
+            background-size: 50% 120px;
+            animation: wave-animation 20s linear infinite;
+        }
+
+        .waves .wave1 {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="%23FFFFFF" opacity="0.7"></path></svg>');
+            animation-duration: 15s;
+        }
+
+        .waves .wave2 {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M985.66,92.83C906.67,72,823.78,31,741.22,14.74,658.86-3.82,576.46,1.94,499.34,13.6c-82.27,12.44-157.09,34.42-226.65,51.13-70.27,16.84-142.23,26.54-212.69,29.84V120h1200V95.83c-70.05-18.48-146.53-26.09-214.34-3Z" fill="%23FFFFFF" opacity="0.5"></path></svg>');
+            animation-duration: 25s;
+            animation-direction: reverse;
+        }
+        
+        @keyframes wave-animation {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .animated-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .animated-shapes li {
+            position: absolute;
+            display: block;
+            list-style: none;
+            width: 20px;
+            height: 20px;
+            background: rgba(209, 222, 222, 0.15);
+            animation: animate-shapes 25s linear infinite;
+            bottom: -150px;
+        }
+
+        .animated-shapes li:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
+        .animated-shapes li:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
+        .animated-shapes li:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; }
+        .animated-shapes li:nth-child(4) { left: 40%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s; }
+        .animated-shapes li:nth-child(5) { left: 65%; width: 20px; height: 20px; animation-delay: 0s; }
+        .animated-shapes li:nth-child(6) { left: 75%; width: 110px; height: 110px; animation-delay: 3s; }
+        .animated-shapes li:nth-child(7) { left: 35%; width: 150px; height: 150px; animation-delay: 7s; }
+        .animated-shapes li:nth-child(8) { left: 50%; width: 25px; height: 25px; animation-delay: 15s; animation-duration: 45s; }
+        .animated-shapes li:nth-child(9) { left: 20%; width: 15px; height: 15px; animation-delay: 2s; animation-duration: 35s; }
+        .animated-shapes li:nth-child(10) { left: 85%; width: 150px; height: 150px; animation-delay: 0s; animation-duration: 11s; }
+
+        @keyframes animate-shapes {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+                border-radius: 0;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+                border-radius: 50%;
+            }
+        }
+
+        .hero-container { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; position: relative; z-index: 2; }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            color: var(--white);
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hero-title .word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(30px) rotate(5deg);
+            animation: title-word-reveal 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        }
+
+        @keyframes title-word-reveal {
+            to {
+                opacity: 1;
+                transform: translateY(0) rotate(0);
+            }
+        }
+        
+        .hero-subtitle { font-size: 1.25rem; margin-bottom: 2.5rem; opacity: 0.9; }
+        .hero-image {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-image:hover { transform: translateY(-10px) rotate(2deg) scale(1.02); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); }
+        .hero-image img { width: 100%; height: auto; border-radius: calc(var(--border-radius) - 0.5rem); display: block; }
+
+        
+            
+        /* Section Title */
+        .section-title { text-align: center; font-size: 2.5rem; color: var(--text-color); margin-bottom: 4rem; position: relative; }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--text-color-light));
+            transform: translateX(-50%) scaleX(0);
+            border-radius: 2px;
+            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            transform-origin: center;
+        }
+        
+        .section-title.is-visible::after {
+            transform: translateX(-50%) scaleX(1);
+        }
+
+        /* About Section */
+        .about { background: var(--background-light); padding-top: 150px; }
+        .about-content { text-align: center; max-width: 800px; margin: 0 auto 4rem; }
+        .about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; }
+        .about-card {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid var(--primary-light-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-card:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(100, 110, 104, 0.15); }
+
+        .about-card::before, .pub-card::before, .speaker-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+            transform: skewX(-25deg);
+            transition: left 0.8s;
+        }
+
+        .about-card:hover::before, .pub-card:hover::before, .speaker-card:hover::before {
+            left: 150%;
+        }
+
+        .about-icon { margin-bottom: 1rem; color: var(--primary-color); }
+        .about-icon svg { width: 50px; height: 50px; transition: transform 0.4s ease; }
+        .about-card:hover .about-icon svg { transform: scale(1.1) rotate(-10deg); }
+
+        /* Publications Section */
+        .publications { background: linear-gradient(135deg, var(--white) 0%, var(--primary-light-color) 100%); }
+        .pub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2.5rem; margin-top: 4rem; }
+        .pub-card { background: var(--white); padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow-heavy); transition: all var(--transition-fast); text-align: center; cursor: pointer; border: 1px solid var(--primary-light-color); position: relative; overflow: hidden; }
+        .pub-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(100, 110, 104, 0.15); }
+        .pub-card .pub-img-container {
+            overflow: hidden;
+            border-radius: calc(var(--border-radius) - 0.5rem);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-light);
+            /* ADD THIS LINE 👇 */
+            height: 250px;
+        }
+        .pub-card img {width: 100%; height: 100%; display: block;transition: transform 0.5s ease; object-fit: cover; max-width: none;}
+        .pub-card:hover img { transform: scale(1.05); }
+        .pub-card h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary-color); }
+        .tag { background: var(--primary-color); color: var(--white); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 1.5rem; display: inline-block; }
+        .tag2 { background: var(--creator); color: var(--white); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 1.5rem; display: inline-block; }
+        /* Stats Section */
+        .stats { background: linear-gradient(135deg, var(--background-dark) 0%, var(--text-color) 100%); color: var(--white); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2.5rem; max-width: 1000px; margin: 0 auto; }
+        .stat-item { text-align: center; padding: 2rem; border-radius: var(--border-radius); background: rgba(209, 222, 222, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(209, 222, 222, 0.1); transition: all var(--transition-fast); cursor: pointer; }
+        .stat-item:hover { background: rgba(209, 222, 222, 0.2); transform: translateY(-5px) scale(1.02); }
+        .counter { font-size: 3rem; font-weight: 700; display: block; margin-bottom: 0.5rem; }
+        
+        /* Events Section */
+        .events { background: var(--background-light); }
+        .event-main-card { background: var(--white); padding: 3rem; border-radius: var(--border-radius); box-shadow: var(--shadow-heavy); display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; border: 1px solid var(--primary-light-color); transition: all var(--transition-fast); }
+        .event-main-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(100, 110, 104, 0.15); }
+        .event-main-content h3 { font-size: 2rem; color: var(--primary-color); margin-bottom: 1rem; }
+        .event-list { list-style: none; padding-left: 0; }
+        .event-list li { padding-left: 2rem; margin-bottom: 0.5rem; font-size: 1rem; position: relative; }
+        .event-list li i { color: var(--primary-color); position: absolute; left: 0; top: 50%; transform: translateY(-50%); transition: transform 0.3s; }
+        .event-list li:hover i { transform: translateY(-50%) scale(1.3) rotate(15deg); }
+        .event-main-image { overflow: hidden; border-radius: calc(var(--border-radius) - 0.5rem); box-shadow: var(--shadow-light); }
+        .event-main-image img { width: 100%; display: block; transition: transform 0.5s ease; }
+        .event-main-card:hover .event-main-image img { transform: scale(1.05); }
+
+        /* Speakers Section */
+        .speakers { background: linear-gradient(135deg, var(--white) 0%, var(--primary-light-color) 100%); }
+        .speakers-scroller { overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent); mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent); width: 100%; margin-top: 4rem; }
+        .speakers-scroll-content { display: flex; gap: 2.5rem; width: max-content; animation: scroll 60s linear infinite; }
+        .speakers-scroll-content:hover { animation-play-state: paused; }
+        
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .speaker-card { background: var(--white); border-radius: var(--border-radius); box-shadow: var(--shadow-heavy); transition: all var(--transition-fast); text-align: center; cursor: pointer; flex-shrink: 0; width: 280px; border: 1px solid var(--primary-light-color); padding-top: 2rem; position: relative; overflow: hidden; }
+        .speaker-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(100, 110, 104, 0.15); }
+        .speaker-img-container { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 1.5rem; overflow: hidden; border: 4px solid var(--primary-color); transition: transform 0.4s ease; }
+        .speaker-card:hover .speaker-img-container { transform: scale(1.05); }
+        .speaker-img-container img { width: 100%; height: 100%; object-fit: cover; }
+        .speaker-content { padding: 0 2rem 2rem; }
+        .speaker-content h3 { font-size: 1.25rem; color: var(--text-color); margin-bottom: 0.25rem; }
+        .speaker-content .title { color: var(--primary-color); font-weight: 600; font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+        /* Sponsors Section */
+        .sponsors { background: var(--background-light); }
+        .sponsors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2.5rem; align-items: center; justify-items: center; margin-top: 4rem; }
+        .sponsor-logo { transition: all var(--transition-fast); filter: grayscale(0%); opacity: 0.7; animation: float 6s ease-in-out infinite; }
+        .sponsor-logo:nth-child(2) { animation-delay: 1s; }
+        .sponsor-logo:nth-child(3) { animation-delay: 2s; }
+        .sponsor-logo:nth-child(4) { animation-delay: 3s; }
+        .sponsor-logo:hover { filter: grayscale(0%); transform: scale(1.1); opacity: 1; animation-play-state: paused; }
+        .sponsor-logo img { max-width: 120px; height: auto; }
+        .sponsor-name {
+            margin-top: 0.75rem; /* Adds space between the logo and the name */
+            font-size: 0.9rem;
+            text-align: center; /* Centers the text under the logo */
+            font-weight: 600;
+            color: var(--text-color-light); /* Uses your theme's text color */
+            transition: color var(--transition-fast);
+        }
+
+        .sponsor-logo:hover .sponsor-name {
+            color: var(--primary-color); /* Changes color on hover to match the logo effect */
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Contact Section */
+        .contact { background: linear-gradient(135deg, var(--background-dark) 0%, var(--text-color) 100%); color: var(--white); }
+        .contact .section-title { color: var(--white); }
+        
+        .contact-shape { position: absolute; z-index: 0; opacity: 0.08; pointer-events: none; }
+        .contact-shape-1 { width: 300px; height: 300px; background: linear-gradient(45deg, var(--primary-color), var(--primary-light-color)); border-radius: 50%; top: 10%; left: -100px; animation: morph-rotate 20s infinite linear alternate; }
+        .contact-shape-2 { width: 250px; height: 250px; background: linear-gradient(-45deg, var(--primary-color), var(--primary-light-color)); bottom: 5%; right: -80px; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); animation: morph-rotate 25s infinite linear reverse; }
+        
+        @keyframes morph-rotate {
+            from { transform: rotate(0deg) scale(1) translateX(0); border-radius: 50%; }
+            to { transform: rotate(360deg) scale(1.2) translateX(20px); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+        }
+
+        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; margin-top: 4rem; position: relative; z-index: 2; }
+        .contact-card { background: rgba(209, 222, 222, 0.1); padding: 2.5rem; border-radius: var(--border-radius); backdrop-filter: blur(10px); border: 1px solid rgba(209, 222, 222, 0.1); text-align: center; transition: all var(--transition-fast); cursor: pointer; box-shadow: var(--shadow-heavy); }
+        .contact-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            background: rgba(209, 222, 222, 0.15);
+            border-color: rgba(209, 222, 222, 0.4);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        .contact-card h3 { margin-bottom: 1rem; font-size: 1.25rem; color: var(--white); }
+        .contact-card p, .contact-card a { margin: 0.5rem 0; color: var(--white); text-decoration: none; opacity: 0.8; font-size: 1rem; }
+        .contact-card a:hover { text-decoration: underline; opacity: 1; }
+
+        /* Social Links */
+        .social-links { display: flex; justify-content: center; gap: 2rem; margin-top: 3rem; position: relative; z-index: 2; }
+        .social-link { color: var(--white); font-size: 1.5rem; text-decoration: none; padding: 1rem; border-radius: 50%; background: rgba(209, 222, 222, 0.1); backdrop-filter: blur(5px); transition: all var(--transition-fast); border: 1px solid rgba(209, 222, 222, 0.1); width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; }
+        .social-link:hover { transform: scale(1.1) rotate(10deg); background: var(--primary-color); box-shadow: 0 8px 20px rgba(100, 110, 104, 0.4); }
+
+        /* Footer */
+        .footer { text-align: center; padding: 2rem; background: var(--background-dark); color: #aaa; font-size: 0.9rem; }
+
+        /* Scroll Animations */
+        .fade-in, .fade-in-up, .fade-in-right, .slide-in-right, .fade-in-left {
+            opacity: 0;
+            transition: opacity var(--transition-slow), transform var(--transition-slow);
+        }
+        .fade-in { transform: translateY(20px); }
+        .fade-in.is-visible { opacity: 1; transform: translateY(0); }
+        .fade-in-up { transform: translateY(40px); }
+        .fade-in-up.is-visible { opacity: 1; transform: translateY(0); }
+        .fade-in-right { transform: translateX(-30px); }
+        .fade-in-right.is-visible { opacity: 1; transform: translateX(0); }
+        .slide-in-right { transform: translateX(100px); }
+        .slide-in-right.is-visible { opacity: 1; transform: translateX(0); }
+        
+        /* --- ADDED FOR YOUR REQUEST --- */
+        .fade-in-left { transform: translateX(-30px); }
+        .fade-in-left.is-visible { opacity: 1; transform: translateX(0); }
+        /* ----------------------------- */
+
+        /* Staggered animation delays */
+        .stagger-children.is-visible .stagger-item {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .stagger-item {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header.scrolled { background-color: rgba(255, 255, 255, 0.98); color: var(--text-color); }
+            .nav-toggle { display: flex; }
+            .nav { position: absolute; top: 100%; left: 0; width: 100%; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.5s; z-index: 10; padding-top: 0; }
+            .nav.active { max-height: 500px; padding: 1rem 0; border-top: 1px solid #ddd; }
+            .nav-list { flex-direction: column; gap: 0; }
+            .nav-link { padding: 1rem 1.5rem; text-align: center; color: var(--text-color); }
+            .nav-link:hover::before { width: 0; }
+            .hero { padding-top: 80px; }
+            .hero-container { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
+            .hero-title { font-size: 2.25rem; margin-bottom: 1rem; }
+            .hero-subtitle { font-size: 1rem; }
+            .hero-image { padding: 1rem; }
+            .section { padding: 60px 0; }
+            .section-title { font-size: 2rem; margin-bottom: 3rem; }
+            .about { padding-top: 100px; }
+            .about-content, .pub-grid, .contact-grid { margin-bottom: 3rem; grid-template-columns: 1fr; gap: 2rem; }
+            .event-main-card { grid-template-columns: 1fr; text-align: center; padding: 2rem; }
+            .event-list { padding-left: 1rem; text-align: left; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="preloader" id="preloader">
+        <div class="preloader-text">
+            <span>S</span><span>P</span><span>A</span><span>D</span><span>E</span>
+        </div>
+    </div>
+
+    <div class="scroll-progress" id="scroll-progress"></div>
+
+    <header class="header" id="header">
+        <div class="container">
+            <a href="#home" class="logo">
+                <img src="images/logospade.PNG" alt="SPADE Logo" class="logo-img">
+            </a>
+            <nav class="nav" id="nav-menu">
+                <ul class="nav-list">
+                    <li><a href="#about" class="nav-link">About</a></li>
+                    <li><a href="gallery" class="nav-link">Our Team</a></li>
+                    <li><a href="gallery" class="nav-link">Gallery</a></li>
+                    <li><a href="events" class="nav-link">Our Events</a></li>
+                    <li><a href="documentary" class="nav-link">Documentary</a></li>
+                    <li><a href="tatva" class="nav-link">Tatva</a></li>
+                    <li><a href="newsletter" class="nav-link">Newsletter</a></li>
+                    <li><a href="#speakers" class="nav-link">Speakers</a></li>
+                    <li><a href="#sponsors" class="nav-link">Sponsors</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="section hero" id="home">
+            <ul class="animated-shapes">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+            <div class="container hero-container">
+                <div class="hero-content fade-in-up">
+                    <h1 class="hero-title">Society for Practical Applications & Development of Economics</h1>
+                    <svg class="hero-subtitle-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 100" preserveAspectRatio="xMidYMid meet" style="width: 100%; max-width: 500px; height: auto;">
+                        <defs>
+                            <linearGradient id="gradientText" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color: #D1DEDE; stop-opacity: 1;" />
+                                <stop offset="50%" style="stop-color: #b7eaea; stop-opacity: 1;" />
+                                <stop offset="100%" style="stop-color: #adedeD; stop-opacity: 1;" />
+                            </linearGradient>
+                            <filter id="glowEffect" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
+                                <feMerge>
+                                    <feMergeNode in="blur" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <text x="50%" y="40%" text-anchor="middle" dominant-baseline="middle" font-family="Poppins, sans-serif" font-size="40" fill="url(#gradientText)" filter="url(#glowEffect)">
+                            Developing Economics, 
+                        </text>
+                        <text x="50%" y="76%" text-anchor="middle" dominant-baseline="middle" font-family="Poppins, sans-serif" font-size="40" fill="url(#gradientText)" filter="url(#glowEffect)">
+                            Elevating Research
+                        </text>
+                    </svg>
+                    <a href="#about" class="btn btn-primary">Discover More</a>
+                   
+                </div>
+                <div class="hero-image slide-in-right">
+                    <img src="images/spadeteam.JPEG" alt="SPADE Team Photo">
+                </div>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/spade.shivaji" target="_blank" class="social-link" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/company/spadeshivaji" target="_blank" class="social-link" aria-label="Connect with us on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.youtube.com/@spadeshivaji9834" target="_blank" class="social-link" aria-label="Subscribe to our YouTube channel"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="hero-divider-container">
+                <div class="waves">
+                    <div class="wave wave1"></div>
+                    <div class="wave wave2"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section about" id="about">
+            <div class="container">
+                <h2 class="section-title fade-in-left">About S.P.A.D.E</h2>
+                <div class="about-content fade-in">
+                    <p>SPADE, Founded in 2016, set up in 2017, is the Society for Practical Application and Development of Economics, the ed-research society of Shivaji College. 
+                        Built on a clear blueprint and a shared vision, it is a vibrant community where students come together to solve real-world problems. 
+                        Using a research-driven approach, SPADE empowers its members to apply critical thinking and creativity to real-world issues. 
+                        Through collaborative projects like documentaries, publications, and events, the society inspires its members to turn data into dialogue. 
+                        "At SPADE, we're not just a society, we're a community that builds, leads, fails but builds anyway"</p>
+                </div>
+                <h2 class="section-title fade-in-left">Our Project</h2>
+                <div class="about-grid stagger-children">
+                    <div class="about-card stagger-item" style="transition-delay: 0.1s;">
+                        <div class="about-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9A2.25 2.25 0 0 0 13.5 5.25h-9A2.25 2.25 0 0 0 2.25 7.5v9A2.25 2.25 0 0 0 4.5 18.75Z" />
+                                </svg>                                  
+                        </div>
+                        <h3>Documentary</h3>
+                        <p>Our in house documentary features leading voices of change makers, experts, 
+                            and entrepreneurs sharing individual insights on the issues of the world. 
+                            Through real life storytelling and guest interviewees, 
+                            SPADE records various opinions as well as their personal experiences.
+                            They produce films that educate, inspire, and ignite important conversations; 
+                            driving change and expanding knowledge.</p>
+                        <br><a href="documentary"><span class="tag">See More</span></a>
+                    </div>
+                    <div class="about-card stagger-item" style="transition-delay: 0.3s;">
+                        <div class="about-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                                </svg>
+                        </div>
+                        <h3>Tatva</h3>
+                        <p>Tatva, which means "essence," is an in-house publication by SPADE. It is a student-led magazine that dives deep into issues that matter. 
+                            It is a magazine wherein students actively contribute by publishing their own articles. 
+                            Our annual magazine Tatva is not just something you flip through — it invites you to explore fresh ideas, 
+                            creative work, and a space where you can truly step in and be a part of the experience.</p>
+                            <br><a href="tatva"><span class="tag">Show more</span></a>
+                    </div>
+                    <div class="about-card stagger-item" style="transition-delay: 0.5s;">
+                        <div class="about-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                            </svg>
+                        </div>
+                        <h3>Arthamanthan</h3>
+                        <p>Arthamanthan is SPADE's annual ISBN-published research booklet featuring student led research on contemporary issues relevant to society. 
+                            Renowned for analytic depth and originality, it provides a credible platform for young researchers to have ideas presented, perspectives honed, 
+                            and valuable contributions to scholarly thought and social insight annually.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section publications" id="publications">
+            <div class="container">
+                <h2 class="section-title fade-in-left">Our Events</h2>
+                <div class="pub-grid stagger-children">
+                    <div class="pub-card stagger-item" style="transition-delay: 0.1s;">
+                        <div class="pub-img-container"><img src="images/aos.jpeg" alt="ace of spade"></div>
+                        <a href="aceofspade"><span class="tag">know more</span></a>
+                        <h3>Ace of Spade</h3>
+                        <p>Ace of Spade is our most awaited annual event, wherein we bring together curiosity, creativity, and collaboration. The event further features speaker sessions, our publication launch, documentary screenings, case competitions, 
+                            and other exciting inter-college contests. All of this comes together in a vibrant celebration of creativity, innovation, and teamwork, making Ace of Spade an unforgettable experience for everyone.</p>
+                    </div>
+                    <div class="pub-card stagger-item" style="transition-delay: 0.3s;">
+                        <div class="pub-img-container"><img src="images/WORKSHOPS.jpg" alt="Seminars"></div>
+                        <a href="workshop#workshops"><span class="tag">know more</span></a>
+                        <h3>Workshops</h3>
+                        <p>SPADE organizes practical and skill building workshops that empower students with hands on knowledge and industry insights. The workshops are based on topics from data analysis and research writing to career strategies and digital marketing. These sessions provide students with skills, expert guidance, and opportunities to enhance both academic and professional growth.</p>
+                    </div>
+                    <div class="pub-card stagger-item" style="transition-delay: 0.5s;">
+                        <div class="pub-img-container"><img src="images/SEMINARS.jpg" alt="Workshops"></div>
+                        <a href="workshop#seminars"><span class="tag">Know more</span></a>
+                        <h3>Seminars</h3>
+                        <p>Our seminars provide interactive workshops with experts, exploring evolving job trends like freelancing and short-term projects. Through interviews and knowledge sharing, these sessions highlight future directions in the workforce while giving students valuable learning experiences from some of the best in the field.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section stats" id="stats-counter">
+            <div class="container">
+                <div class="stats-grid stagger-children">
+                    <div class="stat-item stagger-item" style="transition-delay: 0.1s;">
+                        <span class="counter" data-target="10000">0</span>+
+                        <p>Students Engaged</p>
+                    </div>
+                    <div class="stat-item stagger-item" style="transition-delay: 0.3s;">
+                        <span class="counter" data-target="300">0</span>+
+                        <p>Collaborations</p>
+                    </div>
+                    <div class="stat-item stagger-item" style="transition-delay: 0.5s;">
+                        <span class="counter" data-target="5">0</span>
+                        <p>Documentaries Produced</p>
+                    </div>
+                    <div class="stat-item stagger-item" style="transition-delay: 0.7s;">
+                        <span class="counter" data-target="800">0</span>+
+                        <p>Event Footfall</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section events" id="events">
+            <div class="container">
+                <h2 class="section-title fade-in-left">Newsletter</h2>
+                <div class="event-main-card fade-in">
+                    <div class="event-main-content">
+                        <h3>Re:view</h3>
+                        <p>"Re: view," SPADE's in house newsletter, offers a fresh perspective and an In-depth analysis on the issues that count. 
+                            Each edition provides deep dives and unique insights. A weekly read that challenges your thinking, sparks curiosity, 
+                            and offers fresh perspectives on ideas that matter.</p>
+                        <a href="newsletter.html"><span class="tag">Read It</span></a>
+                    </div>
+                    <div class="event-main-image">
+                        <img src="images/review.jpg" alt="review Photo">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section speakers" id="speakers">
+            <div class="container">
+                <h2 class="section-title fade-in-left">Past Speakers</h2>
+                <div class="speakers-scroller">
+                    <div class="speakers-scroll-content" id="speakers-scroll-content">
+                        <div class="speaker-card">
+                            <div class="speaker-img-container"><img src="speakers/nikhil gaur.jpeg" alt="Nikhil Gaur"></div>
+                            <div class="speaker-content"><h3>Mr. Nikhil Gaur</h3><p class="title">Founder, Hive School<br>
+                                <a href="https://www.linkedin.com/in/nikhilgaur20/?originalSubdomain=in" target="_blank"><span class="tag">linkedin</span></a></p></div>
+                        </div>
+                        <div class="speaker-card">
+                            <div class="speaker-img-container"><img src="speakers/ajitesh.jpeg" alt="Ajitesh Gupta"></div>
+                            <div class="speaker-content"><h3>Mr. Ajitesh Gupta</h3><p class="title">Co-founder, Crowwd
+                                <br><a href="https://www.linkedin.com/in/ajiteshgupta1/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank"><span class="tag">linkedin</span></a></p>
+                            </div>
+                        </div>
+                        <div class="speaker-card">
+                            <div class="speaker-img-container"><img src="speakers/meenakshi aggarwal.jpeg" alt="Meenakshi Aggarwal"></div>
+                            <div class="speaker-content"><h3>Ms. Meenakshi Aggarwal</h3><p class="title">Lead Mentor, IMS
+                            <br><a href="https://www.linkedin.com/in/meenakshi-aggarwal-a52b0217/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank"><span class="tag">linkedin</span></a>
+                            </p></div>
+                        </div>
+                        <div class="speaker-card">
+                            <div class="speaker-img-container"><img src="speakers/charchit kurra.jpeg" alt="Charchit Kurra"></div>
+                            <div class="speaker-content"><h3>Mr. Charchit Kurra</h3><p class="title">Associate, Bain & Company
+                            <br><a href="https://www.linkedin.com/in/charchit-kurra-3698b821a/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank"><span class="tag">linkedin</span></a></p>
+                            </div>
+                        </div>
+                        <div class="speaker-card">
+                            <div class="speaker-img-container"><img src="speakers/parag gupta.jpeg" alt="CA Parag Gupta"></div>
+                            <div class="speaker-content"><h3>CA Parag Gupta</h3><p class="title">Founder, RKG Institute
+                            <br><a href="https://www.linkedin.com/in/caparagguptaofficial/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank"><span class="tag">linkedin</span></a></p>
+                            </div>
+                        </div>
+                        <div class="speaker-card">
+                            <div class="speaker-img-container"><img src="speakers/sandeep jangra.jpeg" alt="Sandeep Jangra"></div>
+                            <div class="speaker-content"><h3>Mr. Sandeep Jangra</h3><p class="title">Founder, Pizza Galleria
+                            <br><a href="https://www.linkedin.com/in/sandeep-jangra-7ab73787/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank"><span class="tag">linkedin</span></a></p>
+                            </div>
+                        </div>
+                        <div class="speaker-card">
+                            <div class="speaker-img-container"><img src="speakers/pratik chainani.jpeg" alt="Pratik Chainani"></div>
+                            <div class="speaker-content"><h3>Mr. Pratik Chainani</h3><p class="title">Larsen & Toubro
+                            <br><a href="https://www.linkedin.com/in/pratik-c-733912199/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank"><span class="tag">linkedin</span></a></p>
+                            </div>
+                        </div>
+                        <div class="speaker-card">
+                            <div class="speaker-img-container"><img src="speakers/srishti sharma.jpeg" alt="Dr. Srishti Sharma"></div>
+                            <div class="speaker-content"><h3>Dr. Srishti Sharma</h3><p class="title">Founder, Shakti Wearables
+                            <br><a href="https://www.linkedin.com/in/dr-srishti-sharma-469983135/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank"><span class="tag">linkedin</span></a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section sponsors" id="sponsors">
+            <div class="container">
+                <h2 class="section-title fade-in-left">Past Sponsors</h2>
+                <div class="sponsors-grid stagger-children">
+                    <div class="sponsor-logo stagger-item" style="transition-delay: 0.1s;"><img src="sponsors/ditto.png" alt="Ditto Insurance Logo"><p class="sponsor-name">Ditto</p></div>
+                    <div class="sponsor-logo stagger-item" style="transition-delay: 0.2s;"><img src="sponsors/campusdiary.png" alt="Campus Diary Logo"><p class="sponsor-name">campus diary</p></div>
+                    <div class="sponsor-logo stagger-item" style="transition-delay: 0.3s;"><img src="sponsors/interviewbuddy.png" alt="Interview Buddy Logo"><p class="sponsor-name">Interview Buddy</p></div>
+                    <div class="sponsor-logo stagger-item" style="transition-delay: 0.4s;"><img src="sponsors/dubuddies.png" alt="DU Buddies Logo"><p class="sponsor-name">DU Buddies</p></div>
+                    <div class="sponsor-logo stagger-item" style="transition-delay: 0.5s;"><img src="sponsors/unstop.png" alt="Unstop Logo"><p class="sponsor-name">Unstop</p></div>
+                    <div class="sponsor-logo stagger-item" style="transition-delay: 0.6s;"><img src="sponsors/thehiddenhour.png" alt="The Hidden Hour Logo"><p class="sponsor-name">The Hidden Hour</p></div>
+                    <div class="sponsor-logo stagger-item" style="transition-delay: 0.7s;"><img src="sponsors/startupnews.png" alt="StartupNews Fyi Logo"><p class="sponsor-name">StartupNews Fyi</p></div>
+                    <div class="sponsor-logo stagger-item" style="transition-delay: 0.8s;"><img src="sponsors/rageroom.png" alt="Rage Room Logo"><p class="sponsor-name">Rage Room</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section contact" id="contact">
+            <div class="contact-shape contact-shape-1"></div>
+            <div class="contact-shape contact-shape-2"></div>
+            <div class="container">
+                <h2 class="section-title text-white fade-in-left">Get in Touch</h2>
+                <div class="contact-grid stagger-children">
+                        <div class="contact-card stagger-item" style="transition-delay: 0.3s;">
+                            <h3>Address</h3>
+                            <p><strong>Shivaji college</strong><br>Mahatma Gandhi Rd, Shivaji Enclave, Raja Garden, New Delhi, Delhi, 110027<br><a href="https://www.google.com/maps/place/Shivaji+College,+University+of+Delhi/@28.6553249,77.1180056,17z/data=!3m1!4b1!4m6!3m5!1s0x390d03746cfd56b7:0x6a3da347642145da!8m2!3d28.6553249!4d77.1205805!16s%2Fm%2F03qnt0k?entry=ttu&g_ep=EgoyMDI1MDgxMy4wIKXMDSoASAFQAw%3D%3D" target="_blank"><br>Maps</a></p>
+                        </div>
+                    <div class="contact-card stagger-item" style="transition-delay: 0.1s;">
+                        <h3>For more info</h3>
+                        <p><strong>Mehul Thapar</strong> (President): <a href="tel:+918076739390"><br>+91 80767 39390</a></p>
+                    </div>
+                    <div class="contact-card stagger-item" style="transition-delay: 0.5s;">
+                        <h3>General Inquiries</h3>
+                        <p>Email us for any questions or collaborations.</p>
+                        <p><a href="mailto:reachoutspade@gmail.com">reachoutspade@gmail.com</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 SPADE Shivaji College. All Rights Reserved.</p>
+        <div style="text-align: left;">
+            <p> 
+                <a href="https://www.linkedin.com/in/ayush-kumar-8b91b2351/" target="_blank"><span class="tag2">Creator of site</span></a></p></div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const preloader = document.getElementById('preloader');
+            const header = document.getElementById('header');
+            const scrollProgress = document.getElementById('scroll-progress');
+            const navToggle = document.getElementById('nav-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const heroTitle = document.querySelector('.hero-title');
+
+            // --- Preloader ---
+            setTimeout(() => {
+                if (preloader) {
+                    preloader.classList.add('fade-out');
+                }
+            }, 200);
+
+            // --- Animate Hero Title ---
+            if (heroTitle) {
+                const text = heroTitle.textContent;
+                const words = text.split(' ');
+                heroTitle.innerHTML = words.map((word, index) => 
+                    `<span class="word" style="animation-delay: ${index * 0.1}s">${word}</span>`
+                ).join(' ');
+            }
+            
+            // --- Speakers Infinite Scroller ---
+            const scrollerContent = document.getElementById('speakers-scroll-content');
+            if (scrollerContent) {
+                const items = Array.from(scrollerContent.children);
+                items.forEach(item => {
+                    const duplicatedItem = item.cloneNode(true);
+                    duplicatedItem.setAttribute('aria-hidden', true);
+                    scrollerContent.appendChild(duplicatedItem);
+                });
+            }
+
+            // --- Scroll-based events ---
+            window.addEventListener('scroll', () => {
+                // Sticky header
+                header.classList.toggle('scrolled', window.scrollY > 50);
+
+                // Scroll Progress Bar
+                const scrollTop = document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrollPercentage = (scrollTop / scrollHeight) * 100;
+                scrollProgress.style.width = `${scrollPercentage}%`;
+            });
+
+            // --- Mobile menu toggle ---
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', () => {
+                    navToggle.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        navToggle.classList.remove('active');
+                        navMenu.classList.remove('active');
+                    });
+                });
+            }
+
+            // --- Intersection Observer for Animations ---
+            const animationObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in-up, .fade-in, .fade-in-right, .slide-in-right, .fade-in-left, .section-title, .stagger-children').forEach(el => {
+                animationObserver.observe(el);
+            });
+
+            // --- Stats Counter Animation ---
+            const statsSection = document.getElementById('stats-counter');
+            let hasCounterAnimated = false;
+            
+            const countUp = () => {
+                if (hasCounterAnimated) return;
+                hasCounterAnimated = true;
+
+                document.querySelectorAll('.counter').forEach(counter => {
+                    const target = +counter.getAttribute('data-target');
+                    let current = 0;
+                    const increment = target / 100;
+
+                    const updateCounter = () => {
+                        if (current < target) {
+                            current += increment;
+                            counter.innerText = Math.ceil(current).toLocaleString();
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            counter.innerText = target.toLocaleString();
+                        }
+                    };
+                    updateCounter();
+                });
+            };
+            
+            if (statsSection) {
+                const counterObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            countUp();
+                            counterObserver.unobserve(statsSection);
+                        }
+                    });
+                }, { threshold: 0.5 });
+                counterObserver.observe(statsSection);
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
