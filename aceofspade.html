@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=700", initial-scale=1.0">
+    <title>SPADE - Ace of Spade 2025</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="images/logospade.PNG" type="image/x-icon">
+    <style>
+        :root {
+            /* Theme variables from your existing files */
+            --primary-color: #646E68;
+            --primary-light-color: #D1DEDE;
+            --background-light: #FFFFFF;
+            --background-dark: #011638;
+            --text-color: #101935;
+            --text-color-light: #646E68;
+            --white: #FFFFFF;
+            --creator: #002767eb;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-heavy: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition-fast: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --transition-slow: 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --border-radius: 1rem;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color-light);
+            background-color: #F8F9FA;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4 {
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1100px; 
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section {
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--text-color) 0%, var(--background-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.8s ease, visibility 0.8s;
+            pointer-events: none;
+        }
+        
+        .preloader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader-text {
+            font-size: 3rem;
+            color: var(--white);
+            font-weight: 700;
+            display: flex;
+        }
+        .preloader-text span {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: preloader-reveal 1.25s ease-out forwards;
+        }
+        .preloader-text span:nth-child(1) { animation-delay: 0.1s; }
+        .preloader-text span:nth-child(2) { animation-delay: 0.2s; }
+        .preloader-text span:nth-child(3) { animation-delay: 0.3s; }
+        .preloader-text span:nth-child(4) { animation-delay: 0.4s; }
+        .preloader-text span:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes preloader-reveal {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        /* --- START: UPDATED HEADER & NAVIGATION --- */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 8px 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 45px;
+            transition: transform var(--transition-fast);
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05) rotate(-3deg);
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-color-light);
+            font-weight: 600;
+            position: relative;
+            padding: 5px 0;
+            transition: color var(--transition-fast);
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.4s ease, left 0.4s ease;
+        }
+        
+        .nav-link:hover::before, .nav-link.active::before {
+            width: 100%;
+            left: 0;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color);
+        }
+
+        /* Mobile Navigation Toggle */
+        .nav-toggle { display: none; cursor: pointer; flex-direction: column; gap: 5px; z-index: 1100; }
+        .nav-toggle span { width: 25px; height: 3px; background: var(--text-color); transition: all var(--transition-fast); transform-origin: center; }
+        .nav-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .nav-toggle.active span:nth-child(2) { opacity: 0; }
+        .nav-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        /* --- END: UPDATED HEADER & NAVIGATION --- */
+
+
+        /* --- ACE OF SPADE HERO SECTION (MODIFIED) --- */
+        .hero {
+            padding-top: 150px;
+            padding-bottom: 80px;
+            /* --- MODIFICATION START --- */
+            background-image: url("images/aceofspade.img.JPG"); /* Path to your new image */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.4); /* Dark overlay for text readability */
+            /* --- MODIFICATION END --- */
+            color: var(--white);
+            text-align: center;
+            position: relative;
+        }
+        .hero-content h1 {
+            font-size: 3.5rem;
+            color: var(--white);
+            text-shadow: 0 3px 10px rgba(0,0,0,0.5);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-content h1::before {
+            /* --- MODIFICATION: This block is now hidden --- */
+            display: none;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+        .event-details {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            margin-top: 2rem;
+        }
+        .detail-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 600;
+        }
+        .detail-item i {
+            font-size: 1.2rem;
+        }
+
+        /* Animated shapes from other pages */
+        .animated-shapes { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; }
+        .animated-shapes li {
+            position: absolute; display: block; list-style: none; width: 20px; height: 20px;
+            background: rgba(209, 222, 222, 0.15); animation: animate-shapes 25s linear infinite; bottom: -150px;
+        }
+        .animated-shapes li:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
+        .animated-shapes li:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
+        .animated-shapes li:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; }
+        @keyframes animate-shapes {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 0; }
+            100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; border-radius: 50%; }
+        }
+
+        /* --- MAIN CONTENT SECTION --- */
+        .main-content {
+            padding: 80px 0;
+            background: var(--background-light);
+        }
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background-color: var(--primary-light-color);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+        }
+        .timeline-container {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+        }
+        .timeline-container.left {
+            left: 0;
+        }
+        .timeline-container.right {
+            left: 50%;
+        }
+        .timeline-container::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            right: -12.5px;
+            background-color: var(--white);
+            border: 4px solid var(--primary-color);
+            top: 25px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .right::after {
+            left: -12.5px;
+        }
+        .timeline-content {
+            padding: 20px 30px;
+            background-color: white;
+            position: relative;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+        }
+        .timeline-content h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Event Competitions Section */
+        .competitions-section {
+            padding: 80px 0;
+            background: #F8F9FA;
+        }
+        .section-title {
+            text-align: center; font-size: 2.5rem; color: var(--text-color);
+            margin-bottom: 4rem; position: relative;
+        }
+        .section-title::after {
+            content: ''; position: absolute; bottom: -15px; left: 50%;
+            width: 60px; height: 4px;
+            background: linear-gradient(90deg, var(--text-color), var(--primary-color));
+            transform: translateX(-50%); border-radius: 2px;
+        }
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+        .event-card {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            text-align: center;
+            border: 1px solid var(--primary-light-color);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+        .event-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(100, 110, 104, 0.15);
+        }
+        .event-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        .footer { text-align: center; padding: 2rem; background: var(--background-dark); color: #aaa; font-size: 0.9rem; }
+        .tag2 { 
+        background: var(--creator); 
+        color: var(--white); 
+        padding: 0.4rem 1rem; 
+        border-radius: 20px; 
+        font-size: 0.8rem; 
+        font-weight: 600; 
+        margin-bottom: 1.5rem; 
+        display: inline-block; 
+             }
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .hero {
+                padding-top: 120px;
+                padding-bottom: 60px;
+            }
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+            .hero-content p {
+                font-size: 1.1rem;
+                padding: 0 1rem;
+            }
+
+            .timeline::after { left: 20px; }
+            .timeline-container { width: 100%; padding-left: 55px; padding-right: 15px; }
+            .timeline-container.right { left: 0%; }
+            .timeline-container.left::after, .timeline-container.right::after { left: 7.5px; }
+            .event-details { flex-direction: column; gap: 1rem; align-items: center;}
+
+            /* --- START: UPDATED RESPONSIVE NAV STYLES (from index.html) --- */
+            .nav-toggle { display: flex; }
+            .nav { position: absolute; top: 100%; left: 0; width: 100%; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.5s; z-index: 10; padding-top: 0; }
+            .nav.active { max-height: 500px; padding: 1rem 0; border-top: 1px solid var(--primary-light-color); }
+            .nav-list { flex-direction: column; gap: 0; }
+            .nav-link { padding: 1rem 1.5rem; text-align: center; color: var(--text-color); }
+            .nav-link:hover::before { width: 0; }
+            /* --- END: UPDATED RESPONSIVE NAV STYLES --- */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="preloader" id="preloader">
+        <div class="preloader-text">
+            <span>S</span><span>P</span><span>A</span><span>D</span><span>E</span>
+        </div>
+    </div>
+
+    <header class="header" id="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="images/logospade.PNG" alt="SPADE Logo" class="logo-img">
+            </a>
+            <nav class="nav" id="nav-menu">
+                <ul class="nav-list">
+                     <li><a href="index#home" class="nav-link">Home</a></li>
+                    <li><a href="gallery" class="nav-link">Our Team</a></li>
+                    <li><a href="events" class="nav-link">Our Events</a></li>
+                    <li><a href="documentary" class="nav-link">Documentary</a></li>
+                    <li><a href="tatva" class="nav-link">Tatva</a></li>
+                    <li><a href="newsletter" class="nav-link">NewsLetter</a></li>
+                    <li><a href="index#speakers" class="nav-link">Speakers</a></li>
+                    <li><a href="index#sponsors" class="nav-link">Sponsors</a></li>
+                    <li><a href="index#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="nav-toggle" id="nav-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section class="hero">
+            <ul class="animated-shapes"><li></li><li></li><li></li></ul>
+            <div class="container hero-content">
+                <h1>Ace of Spade 2025</h1>
+                <p>Our annual flagship event, a grand celebration of economics, strategy, and talent.</p>
+                <div class="event-details">
+                    <div class="detail-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>22nd April 2025</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-clock"></i>
+                        <span>10:30 AM – 12:30 PM</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Chanakya Sabhagar</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="main-content">
+            <div class="container">
+                <div class="timeline">
+                    <div class="timeline-container left">
+                        <div class="timeline-content">
+                            <h3>Inaugural Ceremony</h3>
+                            <p>The event commenced with the traditional Saraswati Vandana and Lamp Lighting. Guest speakers Nikhil Gaur and Ajitesh Gupta were felicitated, followed by an overview of the day's roadmap.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-container right">
+                        <div class="timeline-content">
+                            <h3>"TATVA" Magazine Launch</h3>
+                            <p>SPADE’s first magazine edition, "TATVA," was launched. This edition explores Neuroeconomics through 21 original, research-driven articles. The Editor-in-Chief, Mehul Thapar, and the Editorial Board were recognized for their work.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-container left">
+                        <div class="timeline-content">
+                            <h3>Documentary Premiere</h3>
+                            <p>The ceremony featured the premiere of the documentary, "The Rise of the Gig Economy," which delves into the freelance job market. A Q&A session with the creators and experts followed the screening.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-container right">
+                        <div class="timeline-content">
+                            <h3>Vote of Thanks</h3>
+                            <p>The inaugural ceremony concluded with a Vote of Thanks delivered by our convenor, Dr. Shivani Gupta Ma’am, expressing gratitude to all dignitaries and participants.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="competitions-section">
+            <div class="container">
+                <h2 class="section-title">Event Competitions</h2>
+                <div class="events-grid">
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-briefcase"></i></div>
+                        <h3>Ace the Case</h3>
+                        <p>A national-level case study competition with over 400 registrations, held over three rounds and culminating in offline presentations.</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-gavel"></i></div>
+                        <h3>Inflation Auction</h3>
+                        <p>A dynamic simulated auction where participants explored the real-world impact of inflation on purchasing power.</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-bullhorn"></i></div>
+                        <h3>Brand Wars</h3>
+                        <p>A creative marketing challenge where teams pitched competitor brands and strategically managed industry-specific crises.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 SPADE Shivaji College. All Rights Reserved.</p>
+        <div style="text-align: left;">
+            <p> 
+                <a href="https://www.linkedin.com/in/ayush-kumar-8b91b2351/" target="_blank"><span class="tag2">Creator of site</span></a></p></div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const preloader = document.getElementById('preloader');
+            const header = document.getElementById('header');
+            const navToggle = document.getElementById('nav-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            // --- Preloader ---
+            window.addEventListener('load', () => {
+                preloader.classList.add('fade-out');
+            });
+
+            // --- Mobile menu toggle ---
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', () => {
+                    navToggle.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+                
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        navToggle.classList.remove('active');
+                        navMenu.classList.remove('active');
+                    });
+                });
+            }
+
+            // --- Intersection Observer for Animations ---
+            const animationObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in-up').forEach(el => {
+                animationObserver.observe(el);
+            });
+        });
+    </script>
+    </body>
+
+</html>
+
+
+
